@@ -15,7 +15,7 @@
 #include "credentials.h"
 
 //this is the header, it defines variables which are used in the code.
-#define Grove_Water_Sensor D8
+const int Grove_Water_Sensor = D4;
 const int OLED_RESET=-1;
 const int hexAddress = 0x76;
 Adafruit_BME280 bme ;
