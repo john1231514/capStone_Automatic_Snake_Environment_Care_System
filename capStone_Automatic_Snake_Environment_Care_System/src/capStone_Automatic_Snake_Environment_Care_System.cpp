@@ -46,7 +46,7 @@ int last150MillisSec;
 int last50MillisSec;
 int moisture;
 int lastTempF;
-unsigned int last, lastTime;
+unsigned int last, lastTimeMoist, lastTimetemp, lastTimeHumidity, lastTimeWater;
 const int straightWater = 1530;
 const int straightair = 3585;
 const int moistSoil = 2800;
@@ -111,36 +111,36 @@ void loop() {
     Serial.printf("button %i\n",subValue);
   }
 
-  if((millis()-lastTime > 8000)) {
-    if(mqtt.Update()) {
-      capHumidityfeed.publish(humidity);
-      Serial.printf("Publishing humidity %0.2f\n",capHumidityfeed);
-    }
-    lastTime = millis();
-  }
-
-  if((millis()-lastTime > 8000)) {
-    if(mqtt.Update()) {
-      capTempFfeed.publish(tempF);
-      Serial.printf("Publishing %0.2f\n",capTempFfeed); 
-      } 
-    lastTime = millis();
-  }
-
-  if((millis()-lastTime > 55000)) {
+  if((millis()-lastTimeMoist > 55000)) {
     if(mqtt.Update()) {
       capMoisturefeed.publish(moisture);
-      Serial.printf("Publishing moisture %0.2f\n",capMoisturefeed);
+      Serial.printf("Publishing moisture %i\n",moisture);
     }
-    lastTime = millis();
+    lastTimeMoist = millis();
   }
 
-  if((millis()-lastTime > 55000)) {
+  if((millis()-lastTimeHumidity > 8000)) {
+    if(mqtt.Update()) {
+      capHumidityfeed.publish(humidity);
+      Serial.printf("Publishing humidity %0.2f\n",humidity);
+    }
+    lastTimeHumidity = millis();
+  }
+
+  if((millis()-lastTimetemp > 9000)) {
+    if(mqtt.Update()) {
+      capTempFfeed.publish(tempF);
+      Serial.printf("Publishing tempF %0.2f\n",tempF); 
+      } 
+    lastTimetemp = millis();
+  }
+
+  if((millis()-lastTimeWater > 53000)) {
     if(mqtt.Update()) {
       capWaterSensorfeed.publish(water);
-      Serial.printf("Publishing WaterSensor %i\n",capWaterSensorfeed);
+      Serial.printf("Publishing WaterSensor %i\n",water);
     }
-    lastTime = millis();
+    lastTimeWater = millis();
   }
   
  water=digitalRead(Grove_Water_Sensor);
@@ -154,7 +154,7 @@ currentTime = millis ();
 if((currentTime-last150MillisSec)>150) {
   last150MillisSec = millis();
 tempC = bme.readTemperature();
-  tempF = 1.8 * tempC + 32;
+  tempF = 1.8 * tempC + 32.0;
 humidity = bme.readHumidity();
   Serial.printf("tempF %0.2f\n,humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
 }
