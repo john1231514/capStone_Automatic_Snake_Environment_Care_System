@@ -111,15 +111,7 @@ void loop() {
     Serial.printf("button %i\n",subValue);
   }
 
-  if((millis()-lastTimeMoist > 55000)) {
-    if(mqtt.Update()) {
-      capMoisturefeed.publish(moisture);
-      Serial.printf("Publishing moisture %i\n",moisture);
-    }
-    lastTimeMoist = millis();
-  }
-
-  if((millis()-lastTimeHumidity > 8000)) {
+  if((millis()-lastTimeHumidity > 10000)) {
     if(mqtt.Update()) {
       capHumidityfeed.publish(humidity);
       Serial.printf("Publishing humidity %0.2f\n",humidity);
@@ -127,7 +119,7 @@ void loop() {
     lastTimeHumidity = millis();
   }
 
-  if((millis()-lastTimetemp > 9000)) {
+  if((millis()-lastTimetemp > 10000)) {
     if(mqtt.Update()) {
       capTempFfeed.publish(tempF);
       Serial.printf("Publishing tempF %0.2f\n",tempF); 
@@ -135,7 +127,15 @@ void loop() {
     lastTimetemp = millis();
   }
 
-  if((millis()-lastTimeWater > 53000)) {
+  if((millis()-lastTimeMoist > 60100)) {
+    if(mqtt.Update()) {
+      capMoisturefeed.publish(moisture);
+      Serial.printf("Publishing moisture %i\n",moisture);
+    }
+    lastTimeMoist = millis();
+  }
+
+  if((millis()-lastTimeWater > 60500)) {
     if(mqtt.Update()) {
       capWaterSensorfeed.publish(water);
       Serial.printf("Publishing WaterSensor %i\n",water);
