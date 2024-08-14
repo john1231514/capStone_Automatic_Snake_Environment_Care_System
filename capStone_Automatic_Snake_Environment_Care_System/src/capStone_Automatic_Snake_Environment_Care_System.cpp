@@ -31,6 +31,7 @@ Adafruit_MQTT_Publish capHumidityfeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAM
 Adafruit_MQTT_Publish capMoisturefeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/capMoisturefeed");
 Adafruit_MQTT_Publish capTempFfeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/capTempFfeed");
 Adafruit_MQTT_Publish capWaterSensorfeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/capWaterSensorfeed");
+
 //this is the header, it defines variables which are used in the code.
 const int Grove_Water_Sensor = S2;
 const int OLED_RESET=-1;
@@ -69,10 +70,16 @@ void setup() {
 
   Serial.printf("\n\n");
 
+  //the pin for the water sensor.
   pinMode(Grove_Water_Sensor,INPUT);
+  
+  //the pin for the moisture sensor
+  pinMode(A0,INPUT);
 
+  // the display hexaddress, also turns on the display.
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
+  //pins for both relays
   pinMode(S1, OUTPUT);
   pinMode(D7, OUTPUT);
 
@@ -81,12 +88,12 @@ void setup() {
     Serial.printf("BME280 at address 0x%02X failed to start", hexAddress);
  }
 
-  pinMode(A0,INPUT);
-
+  //tells the display to display something than clear.
   display.display();
   delay(1000);
   display.clearDisplay();
 
+  //tells the display what will be displayed but won't be displayed until the loop.
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
