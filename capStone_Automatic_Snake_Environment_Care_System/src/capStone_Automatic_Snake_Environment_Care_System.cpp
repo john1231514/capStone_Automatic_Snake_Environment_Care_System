@@ -61,7 +61,8 @@ bool status;
 void MQTT_connect();
 bool MQTT_ping();
 
-// setup() runs once, when the device is first turned on
+// setup() runs once, when the device is first turned on.
+// the setup is just telling the photon 2 to turn all the stuff on and where it can find the stuff.
 void setup() {
   Serial.begin(9600);
   waitFor(Serial.isConnected,10000);
@@ -93,7 +94,7 @@ void setup() {
   display.display();
   display.clearDisplay();
  
- //Setup MQTT subscription
+ //Setup MQTT subscription.
  mqtt.subscribe(&capStone);
 }
 
@@ -102,7 +103,8 @@ void loop() {
   MQTT_connect();
   MQTT_ping();
 
-  // this is our 'wait for incoming subscription packets' busy subloop 
+  // this is our 'wait for incoming subscription packets' busy subloop.
+  // it's telling the photon to publish temp, humidity, moisture and the water sensor values to the adafruit dashboard we made.
   Adafruit_MQTT_Subscribe *subscription;
   while ((subscription = mqtt.readSubscription(100))) {
     if (subscription == &capStone) {
@@ -143,22 +145,26 @@ void loop() {
     lastTimeWater = millis();
   }
   
+  //this is just telling it to put the value gotten from the water sensor in a variable called water.
  water=digitalRead(Grove_Water_Sensor);
 
+ //this is the same as the water sensor but for moisture sensor.
  moisture=analogRead(A0);
 
+ //this is telling it to turn on both relays.
  digitalWrite(S1,HIGH);
  digitalWrite(D7,HIGH);
 
-currentTime = millis ();
-if((currentTime-last150MillisSec)>150) {
+ //this is telling it to do math to convert Celsius to fahrenheit and to do that every 150 MilliSseconds.
+ currentTime = millis ();
+ if((currentTime-last150MillisSec)>150) {
   last150MillisSec = millis();
-tempC = bme.readTemperature();
+ tempC = bme.readTemperature();
   tempF = 1.8 * tempC + 32.0;
-humidity = bme.readHumidity();
+ humidity = bme.readHumidity();
   Serial.printf("tempF %0.2f\n,humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
 }
-
+  //telling the photon to send temp, humidity, moisture and the water sensor values to the display.
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
@@ -190,6 +196,7 @@ void MQTT_connect() {
   Serial.printf("MQTT Connected!\n");
 }
 
+//this pings MQTT to make sure the connection does not close we use this a few times in the code.
 bool MQTT_ping() {
   static unsigned int last;
   bool pingStatus;
