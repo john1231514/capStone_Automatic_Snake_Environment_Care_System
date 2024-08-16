@@ -45,6 +45,7 @@ int currentTime;
 int rot;
 int last150MillisSec;
 int last50MillisSec;
+int last1000MillisSec;
 int moisture;
 int lastTempF;
 unsigned int last, lastTimeMoist, lastTimetemp, lastTimeHumidity, lastTimeWater;
@@ -81,7 +82,7 @@ void setup() {
 
   //pins for both relays
   pinMode(S1, OUTPUT);
-  pinMode(D7, OUTPUT);
+  pinMode(D6, OUTPUT);
 
   status = bme . begin (hexAddress) ;
   if(status == false) {
@@ -158,9 +159,13 @@ void loop() {
  //this is the same as the water sensor but for moisture sensor.
  moisture=analogRead(A0);
 
- //this is telling it to turn on both relays.
- digitalWrite(S1,HIGH);
- digitalWrite(D7,HIGH);
+ if(water==0){
+  digitalWrite(D6,HIGH);
+ }
+ if(water==1){
+  digitalWrite(D6,LOW);
+  }
+ 
 
  //this is telling it to do math to convert Celsius to fahrenheit and to do that every 150 MilliSseconds.
  currentTime = millis ();
@@ -171,6 +176,14 @@ void loop() {
  humidity = bme.readHumidity();
   Serial.printf("tempF %0.2f\n,humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
 }
+
+if(tempF< 70){
+  digitalWrite(S1,HIGH);
+}
+if(tempF>85){
+  digitalWrite(S1,LOW);
+}
+
   //telling the photon to send temp, humidity, moisture and the water sensor values to the display.
   display.setTextSize(1);
   display.setTextColor(WHITE);
