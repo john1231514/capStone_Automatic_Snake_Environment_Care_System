@@ -163,12 +163,12 @@ void loop() {
  //this is the same as the water sensor but for moisture sensor.
  moisture=analogRead(A0);
 
+  //this tells the photon to turn on the pump if water is not detected by the water sensor.
  if(water==0){
   digitalWrite(D6,HIGH);
   delay(1000);
   digitalWrite(D6,LOW);
  }
- 
 
  //this is telling it to do math to convert Celsius to fahrenheit and to do that every 150 MilliSseconds.
  currentTime = millis ();
