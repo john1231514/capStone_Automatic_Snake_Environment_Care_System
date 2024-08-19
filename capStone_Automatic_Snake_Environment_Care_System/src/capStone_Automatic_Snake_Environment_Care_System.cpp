@@ -77,6 +77,9 @@ void setup() {
   //the pin for the moisture sensor
   pinMode(A0,INPUT);
 
+  //the pin for the mister
+  pinMode(A5, OUTPUT);
+
   // the display hexaddress, also turns on the display.
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
@@ -84,6 +87,7 @@ void setup() {
   pinMode(S1, OUTPUT);
   pinMode(D6, OUTPUT);
 
+  //getting the status of the BME to make sure it's working right than printing to serial monitor if it's not.
   status = bme . begin (hexAddress) ;
   if(status == false) {
     Serial.printf("BME280 at address 0x%02X failed to start", hexAddress);
@@ -98,7 +102,7 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
-  display.printf("tempF %0.2f\n,humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
+  display.printf("tempF %0.2f\n humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
   display.display();
   display.clearDisplay();
  
@@ -161,10 +165,9 @@ void loop() {
 
  if(water==0){
   digitalWrite(D6,HIGH);
- }
- if(water==1){
+  delay(1000);
   digitalWrite(D6,LOW);
-  }
+ }
  
 
  //this is telling it to do math to convert Celsius to fahrenheit and to do that every 150 MilliSseconds.
@@ -174,12 +177,22 @@ void loop() {
  tempC = bme.readTemperature();
   tempF = 1.8 * tempC + 32.0;
  humidity = bme.readHumidity();
-  Serial.printf("tempF %0.2f\n,humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
+  Serial.printf("tempF %0.2f\n humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
 }
 
+//this tells the photon if the humidity is lower than 40 than turn on the mister that is connected to A5
+if(humidity< 40){
+  digitalWrite(A5, HIGH);
+}
+//this tells the photon if the humidity is higher than 60 than turn off the mister that is connected to A5
+if(humidity> 60){
+  digitalWrite(A5, LOW);
+}
+//this tells the photon if the tempF is lower than 70 than turn on the relay that has the heat lamp connected.
 if(tempF< 70){
   digitalWrite(S1,HIGH);
 }
+//this tells the photon if the tempF is higher than 85 than turn off the relay that has the heat lamp connected.
 if(tempF>85){
   digitalWrite(S1,LOW);
 }
@@ -188,12 +201,12 @@ if(tempF>85){
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
-  display.printf("tempF %0.2f\n,humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
+  display.printf(" tempF %0.2f\n humidity %0.2f\n water %i\n moisture %i ",tempF,humidity,water,moisture);
   display.display();
   display.clearDisplay();
 
-}
 
+}
 
 //Function to connect and reconnect as necessary to the MQTT server.
 //Should be called in the loop function and it will take care if connecting.
