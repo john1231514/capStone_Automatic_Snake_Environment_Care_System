@@ -125,6 +125,7 @@ void loop() {
     Serial.printf("button %i\n",subValue);
   }
 
+  //this publishes humidity to dashboard
   if((millis()-lastTimeHumidity > 10000)) {
     if(mqtt.Update()) {
       capHumidityfeed.publish(humidity);
@@ -132,7 +133,8 @@ void loop() {
     }
     lastTimeHumidity = millis();
   }
-
+  
+  //this publishes tempF to dashboard
   if((millis()-lastTimetemp > 10000)) {
     if(mqtt.Update()) {
       capTempFfeed.publish(tempF);
@@ -141,6 +143,7 @@ void loop() {
     lastTimetemp = millis();
   }
 
+  //this publishes moisture to dashboard
   if((millis()-lastTimeMoist > 60100)) {
     if(mqtt.Update()) {
       capMoisturefeed.publish(moisture);
@@ -148,7 +151,8 @@ void loop() {
     }
     lastTimeMoist = millis();
   }
-
+  
+  //publishes water sensor readings to dashboard
   if((millis()-lastTimeWater > 60500)) {
     if(mqtt.Update()) {
       capWaterSensorfeed.publish(water);
@@ -189,7 +193,7 @@ if(humidity> 60){
   digitalWrite(A5, LOW);
 }
 //this tells the photon if the tempF is lower than 70 than turn on the relay that has the heat lamp connected.
-if(tempF< 70){
+if(tempF< 75){
   digitalWrite(S1,HIGH);
 }
 //this tells the photon if the tempF is higher than 85 than turn off the relay that has the heat lamp connected.
